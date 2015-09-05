@@ -103,10 +103,13 @@ namespace Microsoft.Xna.Framework.Media
 
         private void PlatformPlay()
         {
-            // Seek to start to ensure playback at the start.
-            _player.Seek(CMTime.Zero);
-            
-            _player.Play();
+            System.Threading.Tasks.Task.Run(
+                async () =>
+                {
+                    // Seek to start to ensure playback at the start.
+                    await _player.SeekAsync(CMTime.Zero);
+                    _player.Play(); 
+                });
         }
 
 		internal void Resume()
