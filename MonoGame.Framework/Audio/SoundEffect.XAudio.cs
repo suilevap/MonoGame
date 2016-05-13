@@ -12,8 +12,20 @@ using SharpDX.X3DAudio;
 
 namespace Microsoft.Xna.Framework.Audio
 {
-    public sealed partial class SoundEffect : IDisposable
+    partial class SoundEffect
     {
+#if WINDOWS || (WINRT && !WINDOWS_PHONE)
+
+        // These platforms are only limited by memory.
+        internal const int MAX_PLAYING_INSTANCES = int.MaxValue;
+
+#elif WINDOWS_PHONE
+
+        // Reference: http://msdn.microsoft.com/en-us/library/microsoft.xna.framework.audio.instanceplaylimitexception.aspx
+        internal const int MAX_PLAYING_INSTANCES = 64;
+
+#endif
+
         #region Static Fields & Properties
 
         internal static XAudio2 Device { get; private set; }
@@ -123,19 +135,27 @@ namespace Microsoft.Xna.Framework.Audio
             }
         }
 
-        public void PlatformInitialize(byte[] buffer, int sampleRate, AudioChannels channels)
-        {
-            CreateBuffers(  new WaveFormat(sampleRate, (int)channels),
-                            DataStream.Create(buffer, true, false),
-                            0, 
-                            buffer.Length);
-        }
-
-        private void PlatformInitialize(byte[] buffer, int offset, int count, int sampleRate, AudioChannels channels, int loopStart, int loopLength)
+        private void PlatformInitializePCM(byte[] buffer, int offset, int count, int sampleRate, AudioChannels channels, int loopStart, int loopLength)
         {
             CreateBuffers(  new WaveFormat(sampleRate, (int)channels),
                             DataStream.Create(buffer, true, false, offset),
                             loopStart, 
+                            loopLength);
+        }
+
+        private void PlatformInitializeFormat(byte[] buffer, int format, int sampleRate, int channels, int blockAlignment, int loopStart, int loopLength)
+        {
+            WaveFormat waveFormat;
+            if (format == 1)
+                waveFormat = new WaveFormat(sampleRate, channels);
+            else if (format == 2)
+                waveFormat = new WaveFormatAdpcm(sampleRate, channels, blockAlignment);
+            else
+                throw new NotSupportedException("Unsupported wave format!");
+
+            CreateBuffers(  waveFormat,
+                            DataStream.Create(buffer, true, false),
+                            loopStart,
                             loopLength);
         }
 
@@ -226,6 +246,8 @@ namespace Microsoft.Xna.Framework.Audio
 
         internal static void PlatformShutdown()
         {
+            SoundEffectInstancePool.Shutdown();
+
             if (MasterVoice != null)
             {
                 MasterVoice.DestroyVoice();

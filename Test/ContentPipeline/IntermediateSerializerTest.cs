@@ -175,7 +175,11 @@ namespace MonoGame.Tests.ContentPipeline
             {
                 a = null,
                 b = null,
-                c = string.Empty
+                c = string.Empty,
+                d = null,
+                e = CullMode.CullClockwiseFace,
+                f = CullMode.CullCounterClockwiseFace,
+                g = CullMode.CullClockwiseFace
             });
         }
 
@@ -474,6 +478,20 @@ namespace MonoGame.Tests.ContentPipeline
                     new ChildCollectionChild { Name = "Foo" },
                     new ChildCollectionChild { Name = "Bar" }
                 }
+            });
+        }
+
+        [Test]
+        public void Colors()
+        {
+            SerializeAndAssert("27_Colors.xml", new Colors()
+            {
+                White = Color.White,
+                Black = Color.Black,
+                Transparent = Color.Transparent,
+                Red = Color.Red,
+                Green = Color.Green,
+                Blue = Color.Blue
             });
         }
     }

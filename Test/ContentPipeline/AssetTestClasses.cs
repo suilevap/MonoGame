@@ -137,6 +137,16 @@ public class OptionalElements
 
     [ContentSerializer(Optional = true)]
     public string c = "c";
+
+    [ContentSerializer(Optional = true)]
+    public CullMode? d = null;
+
+    [ContentSerializer(Optional = true)]
+    public CullMode? e = CullMode.CullClockwiseFace;
+
+    public CullMode? f = CullMode.CullCounterClockwiseFace;
+
+    public CullMode g = CullMode.CullClockwiseFace;
 }
 #endregion
 
@@ -504,6 +514,18 @@ public class ChildCollectionChild : ContentItem
 {
     [ContentSerializerIgnore]
     public ChildCollections Parent { get; set; }
+}
+#endregion
+
+#region Colors
+public class Colors
+{
+    public Color White { get; set; }
+    public Color Black { get; set; }
+    public Color Transparent { get; set; }
+    public Color Red { get; set; }
+    public Color Green { get; set; }
+    public Color Blue { get; set; }
 }
 #endregion
 

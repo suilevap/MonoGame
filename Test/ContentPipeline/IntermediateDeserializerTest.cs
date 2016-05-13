@@ -188,6 +188,10 @@ namespace MonoGame.Tests.ContentPipeline
                 Assert.AreEqual(null, optional.a);
                 Assert.AreEqual(null, optional.b);
                 Assert.AreEqual(string.Empty, optional.c);
+                Assert.AreEqual(null, optional.d);
+                Assert.AreEqual(CullMode.CullClockwiseFace, optional.e);
+                Assert.AreEqual(CullMode.CullCounterClockwiseFace, optional.f);
+                Assert.AreEqual(CullMode.CullClockwiseFace, optional.g);
             });
         }
 
@@ -401,12 +405,12 @@ namespace MonoGame.Tests.ContentPipeline
             Deserialize<ExternalReferences>("17_ExternalReferences.xml", externalReferences =>
             {
                 Assert.NotNull(externalReferences.Texture);
-                Assert.IsTrue(externalReferences.Texture.Filename.EndsWith(@"\Xml\grass.tga"));
+                Assert.IsTrue(externalReferences.Texture.Filename.EndsWith("/Xml/grass.tga".Replace('/', Path.DirectorySeparatorChar)));
                 Assert.NotNull(externalReferences.Texture2);
-                Assert.IsTrue(externalReferences.Texture2.Filename.EndsWith(@"\Xml\grass.tga"));
+                Assert.IsTrue(externalReferences.Texture2.Filename.EndsWith("/Xml/grass.tga".Replace ('/', Path.DirectorySeparatorChar)));
                 Assert.AreNotSame(externalReferences.Texture, externalReferences.Texture2);
                 Assert.NotNull(externalReferences.Shader);
-                Assert.IsTrue(externalReferences.Shader.Filename.EndsWith(@"\Xml\foliage.fx"));
+                Assert.IsTrue(externalReferences.Shader.Filename.EndsWith("/Xml/foliage.fx".Replace ('/', Path.DirectorySeparatorChar)));
             });
         }
 
@@ -573,6 +577,20 @@ namespace MonoGame.Tests.ContentPipeline
                 Assert.AreEqual("Foo", childCollections.Children[0].Name);
                 Assert.AreEqual(childCollections, childCollections.Children[1].Parent);
                 Assert.AreEqual("Bar", childCollections.Children[1].Name);
+            });
+        }
+
+        [Test]
+        public void Colors()
+        {
+            DeserializeCompileAndLoad<Colors>("27_Colors.xml", colors =>
+            {
+                Assert.AreEqual(colors.White, Color.White);
+                Assert.AreEqual(colors.Black, Color.Black);
+                Assert.AreEqual(colors.Transparent, Color.Transparent);
+                Assert.AreEqual(colors.Red, Color.Red);
+                Assert.AreEqual(colors.Green, Color.Green);
+                Assert.AreEqual(colors.Blue, Color.Blue);
             });
         }
     }
